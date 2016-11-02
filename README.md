@@ -1,0 +1,1 @@
+This website allows parents and teachers to easily plan conferences.
