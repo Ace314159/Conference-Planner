@@ -187,6 +187,9 @@ function list(postData, jtParams) {
             //$("tr, .jtable-goto-page").eq(1).first().text("Please enter a valid teacher name.");
         }
     })
+    if($("body").hasClass("loading")) {
+        $("body").removeClass("loading");
+    }
     return deferred;
 }
 

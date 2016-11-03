@@ -2,7 +2,7 @@
 	$db;
 
 	try {
-	    $db = new PDO("mysql:host=localhost;dbname=confrence_planner;charset=utf8mb4", $_GET["pass"], $_GET["word"]);
+	    $db = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", $_GET["pass"], $_GET["word"]);
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $r = "OK";
 	    $startDay = $_GET["sDay"];

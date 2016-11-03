@@ -19,8 +19,11 @@ handlers:
   upload: (.*\.(ico$|jpg$|png$|gif$))
   application_readable: true
 
-- url: /php/(.+\.php)$
+- url: /(.*\.php$)
   script: \1
+
+- url: /.*
+  script: 404.php
 
 skip_files:
 - (xampp/.*)|

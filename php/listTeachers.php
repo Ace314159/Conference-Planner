@@ -6,7 +6,7 @@
 
 	try {
 		$r = "OK";
-	    $db = new PDO("mysql:host=localhost;dbname=confrence_planner;charset=utf8mb4", "pub", "");
+	    $db = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "pub", "");
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
 		$stmt = $db->query('SELECT DISTINCT `Teacher` FROM `confrences` ORDER BY `Teacher` ASC');

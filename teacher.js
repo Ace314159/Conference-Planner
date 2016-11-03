@@ -1,7 +1,7 @@
 var auth2;
 var name = "";
 var user = undefined;
-var domain = "ishstudents.in";
+var domain = "ishyd.org";
 var interval = 5;
 
 $(document).ready(function () {
@@ -100,9 +100,9 @@ function list(postData, jtParams) {
     $.post("php/teacher.php", {teacher : tName, jtStartIndex : jtParams["jtStartIndex"], jtPageSize : jtParams["jtPageSize"]}, function(data) {
         deferred.resolve(JSON.parse(data));
     });
-    deferred.then(function(data) {
-        
-    })
+    if($("body").hasClass("loading")) {
+        $("body").removeClass("loading");
+    }
     return deferred;
 }
 
