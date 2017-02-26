@@ -5,13 +5,13 @@
 	$rows = array();
 
 	try {
-		$r = "OK";
-	    $db = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "pub", "");
+	    $r = "OK";
+	    $db = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 
-		$stmt = $db->query('SELECT DISTINCT `Teacher` FROM `confrences` ORDER BY `Teacher` ASC');
+	    $stmt = $db->query('SELECT DISTINCT `Teacher` FROM `conferences` ORDER BY `Teacher` ASC');
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-	    	$rows[] = $row["Teacher"];
+	    	$rows[] = utf8_encode($row["Teacher"]);
 	    }
     } catch(PDOException $e) {
     	$m = $e->getMessage();
@@ -26,5 +26,5 @@
     	$jTableResult["Message"] = $m;
     }
 
-	print json_encode($jTableResult);
+	echo json_encode($jTableResult);
 	$db = null;

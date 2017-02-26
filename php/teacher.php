@@ -5,8 +5,8 @@
 	$rows = array();
 
 	try {
-	    $db = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "pub", "");
-	    $selected = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "reset", "NyKFRFwYNUU85TGj");
+	    $db = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
+	    $selected = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $selected->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $r = "OK";
@@ -15,7 +15,7 @@
 	    	$teacher = $_POST["teacher"];
 	    }
 
-		$stmt = $db->prepare('SELECT `Student`, `Time`, `Available` FROM `confrences` WHERE `Teacher` LIKE ? ORDER BY `Student`, `Time` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
+		$stmt = $db->prepare('SELECT `Student`, `Time`, `Available` FROM `conferences` WHERE `Teacher` LIKE ? AND Available = 0 ORDER BY `Time`, `Student` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
 		$stmt->execute(array("%$teacher%"));
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
     		$row["Available"] = ($row["Available"] == 1) ? "Yes" : "No";

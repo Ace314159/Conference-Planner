@@ -44,7 +44,7 @@ $(document).ready(function () {
                 type: 'datetime',
                 display: function (data) {
                     var dt = new Date(data["record"]["Time"].slice(0, -3)); 
-                    return dt.toDateString() + ", "  + dt.toLocaleTimeString().replace(":00 ", " ");
+                    return dt.toDateString() + ", "  + dt.toLocaleTimeString().replace(":00 ", " ").replace(":00 ", " ");
                 }
             },
             ETime: {
@@ -54,7 +54,7 @@ $(document).ready(function () {
                 display: function(data) {
                     var dt = new Date(data["record"]["Time"].slice(0, -3));
                     dt.setMinutes(dt.getMinutes() + interval); 
-                    return dt.toDateString() + ", "  + dt.toLocaleTimeString().replace(":00 ", " ");
+                    return dt.toDateString() + ", "  + dt.toLocaleTimeString().replace(":00 ", " ").replace(":00 ", " ");
                 }
             },
             Other: {

@@ -11,8 +11,8 @@
 	$count = 0;
 
 	try {
-	    $db = new PDO("mysql:host=unix_socket;dbname=confrence_planner;charset=utf8mb4", "pub", "");
-	    $selected = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "reset", "NyKFRFwYNUU85TGj");
+	    $db = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
+	    $selected = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $selected->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $r = "OK";
@@ -43,7 +43,7 @@
 	    	}
 	    }
 
-		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `confrences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.' AND `Teacher` NOT IN ('.implode(", ", $teachers).') ORDER BY `Teacher`, `Time` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
+		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.' AND `Teacher` NOT IN ('.implode(", ", $teachers).') ORDER BY `Time`, `Teacher` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
 		$stmt->execute(array("%$search%"));
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 	    	if(!in_array(strtotime($row["Time"]), $times)) {
@@ -54,7 +54,7 @@
 	    		$count++;
 	    	}
 	    }
-	    $stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `confrences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my);
+	    $stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my);
 		$stmt->execute(array("%$search%"));
     } catch(PDOException $e) {
     	$m = $e->getMessage();

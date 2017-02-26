@@ -1,0 +1,5 @@
+root: xR8OfckrfTDUjBvm
+
+confplanner.ishyd.org/php/reset1.php?pass=ishydorg_akash&word=xR8OfckrfTDUjBvm&interval=300&sDay=1489622400&sTime=46800&eDay=1489622400&eTime=64800&teachers=Beena Mathew,Chetan Prasad,David Schalm,Madhavi Latha,Mary Cherian,Meera Sampath,Michael Stagg,Rahmat Kareem,Ranganath Daruri,Renaud Milhoux,Sheila Ramesh,Srimathy Kannan,Trishul Kumar,Vandana Gupta,Carlos Del Pozo,Chittari Paul,Irena Tsarenko,Jigyasa Rangeen,Karanpreet Singh,Noel D'souza,Oksana Seredniak,Tina Peji,Venugopal Odeti,Lily Nair,Patrick Dempsey
+
+confplanner.ishyd.org/php/reset2.php?pass=ishydorg_akash&word=xR8OfckrfTDUjBvm&interval=300&sDay=1489708800&sTime=28800&eDay=1489708800&eTime=46800&teachers=Beena Mathew,Chetan Prasad,David Schalm,Madhavi Latha,Mary Cherian,Meera Sampath,Michael Stagg,Rahmat Kareem,Ranganath Daruri,Renaud Milhoux,Sheila Ramesh,Srimathy Kannan,Trishul Kumar,Vandana Gupta,Carlos Del Pozo,Chittari Paul,Irena Tsarenko,Jigyasa Rangeen,Karanpreet Singh,Noel D'souza,Oksana Seredniak,Tina Peji,Venugopal Odeti,Lily Nair,Patrick Dempsey

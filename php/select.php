@@ -4,8 +4,8 @@
 	$m;
 
 	try {
-	    $db = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "pub", "");
-	    $selected = new PDO("mysql:unix_socket=localhost;dbname=confrence_planner;charset=utf8mb4", "reset", "NyKFRFwYNUU85TGj");
+	    $db = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
+	    $selected = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner", "ishydorg_akash", "xR8OfckrfTDUjBvm");
 	    $db->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $selected->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
 	    $r = "OK";
@@ -13,7 +13,7 @@
 	    $time = $_POST["time"];
 	    $student = $_POST["student"];
 
-		$stmt = $db->prepare("UPDATE `confrences` SET `Available` = 0,`Student` = ? WHERE `Teacher` = ? AND `Time` = ? AND `Available` = 1 AND `Student` IS NULL");
+		$stmt = $db->prepare("UPDATE `conferences` SET `Available` = 0,`Student` = ? WHERE `Teacher` = ? AND `Time` = ? AND `Available` = 1 AND `Student` IS NULL");
 	    $stmt->execute(array($student, $teacher, $time));
 
 	    $m =  $stmt->rowCount();
