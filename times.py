@@ -1,6 +1,6 @@
 import time
 import datetime
-time_zone_diff = 0   #(5 * 60 * 60) + (30 * 60)  # +5:30
+time_zone_diff = (5 * 60 * 60) + (30 * 60)  # +5:30
 
 
 Y = int(input("What is the start year? "))
@@ -21,3 +21,5 @@ print("sDay=" + str(int(time.mktime(D))), end="&")
 print("sTime=" + str(int((sH * 60 * 60) + (sM * 60))), end="&")
 print("eDay=" + str(int(time.mktime(D))), end="&")
 print("eTime=" + str(int((eH * 60 * 60) + (eM * 60))))
+
+input()
