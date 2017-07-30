@@ -1,7 +1,7 @@
 var auth2;
 var name = "";
 var user = undefined;
-var domain = "ishstudents.in";
+var domain = "ishyd.org";
 var interval = 5;
 var first = "";
 var selected = false;
@@ -38,20 +38,16 @@ $(document).ready(function () {
         fields: {
             Teacher: {
                 title: "Teacher",
-                width: "25%",
+                width: "20%",
                 type: 'text'
             },
             Time: {
                 title: 'Start Time',
-                width: '25%',
+                width: '20%',
                 type: 'datetime',
                 display: function (data) {
-                    var s = data["record"]["Time"].slice(0, -3);
-                    var pl = s.split(" ");
-                    var d = pl[0].split("-");
-                    var t = pl[1].split(":");
-                    var dt = new Date(d[0], d[1], d[2], t[0], t[1]);
-                    return dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'});
+                    var dt = new Date(data["record"]["Time"].slice(0, -3)); 
+                    return dt.toLocaleTimeString().replace(":00 ", " ").replace(":00 ", " ");
                 }
             }/*,
             Available: {
@@ -69,30 +65,34 @@ $(document).ready(function () {
                 width: '22%',
                 type: 'text'
             }*/,
+            StudentName: {
+                title: 'Student Name',
+                width: '20%',
+                display: function(data) {
+                    var id = "abcdefg" + data["record"]["Teacher"] + "!---!" + data["record"]["Time"];
+                    return "<input id='" + id + "' type='text' />";
+                }
+            },
             ETime: {
                 title: 'End Time',
-                width: '25%',
+                width: '20%',
                 type: 'datetime',
                 display: function(data) {
-                    var s = data["record"]["Time"].slice(0, -3);
-                    var pl = s.split(" ");
-                    var d = pl[0].split("-");
-                    var t = pl[1].split(":");
-                    var dt = new Date(d[0], d[1], d[2], t[0], t[1]);
+                    var dt = new Date(data["record"]["Time"].slice(0, -3));
                     dt.setMinutes(dt.getMinutes() + interval); 
-                    return dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'});
+                    return dt.toLocaleTimeString().replace(":00 ", " ").replace(":00 ", " ");
                 }
             },
             Other: {
                 title: 'Reserve Time Slot',
-                width: '25%',
+                width: '20%',
                 display: function (data) {
                     var value = data["record"]["Available"];
                     var id = (data["record"]["Teacher"] + "!---!" + data["record"]["Time"]).replace(/ /g, "_");
                     if(value === "No") {
                         try {
                             if(name == data["record"]["Student"]) {
-                                return '<button class="ui-button ui-state-disabled" id="' + id + '"onclick="remove(this)">Remove Time slot</button>';
+                                return '<button class="ui-button" id="' + id + '"onclick="remove(this)">Remove Time slot</button>';
                             } else {
                                 return '<button class="ui-button ui-state-disabled">Remove Time Slot</button>';
                             }
@@ -100,7 +100,7 @@ $(document).ready(function () {
                             return '<button class="ui-button ui-state-disabled">Reserve Time Slot</button>';
                         }
                     } else {
-                        return '<button class="ui-button ui-state-disabled" id="' + id + '"onclick="select(this)">Reserve Time Slot</button>';
+                        return '<button class="ui-button" id="' + id + '"onclick="select(this)">Reserve Time Slot</button>';
                     }
                 }
             }
@@ -170,6 +170,7 @@ function userChanged() {
         $("#my").checkboxradio("enable");
         user = gauth2.currentUser.get();
         name = user.getBasicProfile().getName();
+        check();
     } else {
         $("#my").checkboxradio("disable");
         $("#my").prop("checked", false);
@@ -177,6 +178,14 @@ function userChanged() {
     }
     $('#container').jtable("reload");
 }
+
+function check() {
+    if(name !== "Divya Katikaneni" && name !== "Patrick Dempsey") {
+        gauth2.disconnect();
+        gauth2.signOut();
+    }
+}        
+
 function list(postData, jtParams) {
     var se = (selected) ? $("#search").val() : prevSearch;
     selected = false;
@@ -202,13 +211,16 @@ function list(postData, jtParams) {
 }
 
 function select(e) {
-    return;
     $("body").addClass("loading");
     $('#container').jtable('reload', function() {
-        if(user.getHostedDomain() == domain) {
+        if(name === "Divya Katikaneni" || name === "Patrick Dempsey") {
             if($(e).length) {
                 id = $(e).attr("id").replace(/_/g, " ").split("!---!");
-                $.post("php/select.php", {teacher : id[0], time : id[1], student : user.getBasicProfile().getName()}, function(data) {
+                var i = $(e).parent().parent().find("td > input");
+                if(i.val() == "") {
+                    return;
+                }
+                $.post("php/select.php", {teacher : id[0], time : id[1], student : i.val()}, function(data) {
                     data = JSON.parse(data);
                     $('#container').jtable('reload');
                     if(data["Message"] < 1) {
@@ -234,10 +246,9 @@ function select(e) {
 }
 
 function remove(e) {
-    return;
     $("body").addClass("loading");
-    if(user.getHostedDomain() == domain) {
-        var id = $(e).attr("id").split("_").join(" ").split("!---!");
+    if(name === "Divya Katikaneni" || name === "Patrick Dempsey") {
+        var id = $(e).attr("id").replace(/_/g, " ").split("!---!");
         $.post("php/remove.php", {teacher : id[0], time : id[1], student : name}, function(data) {
             data = JSON.parse(data);
             $('#container').jtable('reload');

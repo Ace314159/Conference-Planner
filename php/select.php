@@ -20,7 +20,7 @@
 
 	    if($m > 0) {
 	    	$stmt = $selected->prepare("INSERT INTO `selected`(`Student`, `Teacher`, `Time`) VALUES (?, ?, ?)");
-	    	$stmt->execute(array($student, $teacher, $time));
+	        $stmt->execute(array($student, $teacher, $time));
 	    }
     } catch(PDOException $e) {
     	$m = 0;

@@ -38,12 +38,13 @@
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 	    	$teachers[] = $selected->quote($row["Teacher"]);
 	    	$pl = $row["UNIX_TIMESTAMP(`Time`)"];
-	    	for($i = $pl - $waitInterval; $i <= $pl + $waitInterval; $i += $timesInterval) {
+	    	
+	    	for($i = $pl; $i < $pl + $waitInterval; $i += $timesInterval) {
 	    		$times[] = $i;
 	    	}
-	    }
-
-		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.' AND `Teacher` NOT IN ('.implode(", ", $teachers).') ORDER BY `Time`, `Teacher` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
+	    } 
+//AND `Teacher` NOT IN ('.implode(", ", $teachers).')
+		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.'  ORDER BY `Time`, `Teacher` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
 		$stmt->execute(array("%$search%"));
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
 	    	if(!in_array(strtotime($row["Time"]), $times)) {
