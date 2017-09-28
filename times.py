@@ -1,6 +1,6 @@
 import time
 import datetime
-time_zone_diff = (5 * 60 * 60) + (30 * 60)  # +5:30\
+time_zone_diff = (5 * 60 * 60) + (30 * 60)  # +5:30
 
 Y = int(input("What is the start year? "))
 m = int(input("What is the start month? "))

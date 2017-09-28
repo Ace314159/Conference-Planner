@@ -44,12 +44,24 @@
 	    	}
 	    } 
 //AND `Teacher` NOT IN ('.implode(", ", $teachers).')
-		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.'  ORDER BY `Time`, `Teacher` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
+		$stmt = $db->prepare('SELECT `Teacher`, `Time`, `Available`, `Student` FROM `conferences` WHERE `Teacher` LIKE ? AND `Available` IN '.$avail.$my.' AND `Teacher` NOT IN ('.implode(", ", $teachers).') ORDER BY `Time`, `Teacher` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
 		$stmt->execute(array("%$search%"));
+		$prevTime = -1;
+		$prevTeacher = -1;
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
-	    	if(!in_array(strtotime($row["Time"]), $times)) {
+	    	$intTime = strtotime($row["Time"]);
+	    	if(!in_array($intTime, $times)) {
+		    	if($my) {
+		    		if($prevTime + $timesInterval == $intTime && $prevTeacher == $row["Teacher"]) {
+		    			$rows[count($rows)-1]["IsTenMin"] = "1";
+		    			continue;
+		    		}
+	    			$prevTime = $intTime;
+	    			$prevTeacher = $row["Teacher"];
+		    	}
 	    		$row["Available"] = ($row["Available"] == 1) ? "Yes" : "No";
 	    		$row["Student"] = ($row["Student"] == null) ? "None" : $row["Student"];
+	    		$row["10Min?"] = (in_array($intTime + 300, $times)) ? "No" : "Yes";
 		    	$rows[] = $row;
 	    	} else {
 	    		$count++;
@@ -72,5 +84,6 @@
     	$jTableResult["TotalRecordCount"] = 0;
     }
 
-	print json_encode($jTableResult);
+	echo json_encode($jTableResult);
 	$db = null;
+?>

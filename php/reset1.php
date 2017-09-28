@@ -1,5 +1,8 @@
 <?php
 	$db;
+	ob_start();
+	include("listTeachers.php");
+	ob_end_clean();
 
 	try {
 	    $db = new PDO("mysql:host=localhost;dbname=ishydorg_conference_planner;charset=utf8mb4", $_GET["pass"], $_GET["word"]);
@@ -10,7 +13,7 @@
 	    $startTime = $_GET["sTime"];
 	    $endTime = $_GET["eTime"];
 	    $interval = $_GET["interval"];
-	    $teachers = explode(",", $_GET["teachers"]);
+	    $teachers = $teachersNames;
 	    $day = 86400;
 	    $query = "INSERT INTO `conferences`(`Teacher`, `Time`, `Available`, `Student`) VALUES";
 
@@ -32,3 +35,4 @@
     }
 
 	$db = null;
+?>

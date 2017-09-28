@@ -29,7 +29,7 @@ $(document).ready(function () {
         animationsEnabled: false,
         loadingAnimationDelay: 2000,
         messages : {
-            noDataAvailable: "Please enter a valid teacher name.",
+            noDataAvailable: "Please enter a valid teacher name that you have not already booked a slot with.",
             loadingMessage: "Loading..."
         },
         actions: {
@@ -38,20 +38,21 @@ $(document).ready(function () {
         fields: {
             Teacher: {
                 title: "Teacher",
-                width: "25%",
+                width: "20%",
                 type: 'text'
             },
             Time: {
                 title: 'Start Time',
-                width: '25%',
+                width: '20%',
                 type: 'datetime',
                 display: function (data) {
+                    var id = (data["record"]["Teacher"] + "!---!" + data["record"]["Time"] + "---stime").replace(/ /g, "_");
                     var s = data["record"]["Time"].slice(0, -3);
                     var pl = s.split(" ");
                     var d = pl[0].split("-");
                     var t = pl[1].split(":");
                     var dt = new Date(d[0], d[1], d[2], t[0], t[1]);
-                    return dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'});
+                    return "<span id='" + id + "' data-time='" + dt.toString() +"'>" + dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'})  + "</span>";
                 }
             }/*,
             Available: {
@@ -71,28 +72,49 @@ $(document).ready(function () {
             }*/,
             ETime: {
                 title: 'End Time',
-                width: '25%',
+                width: '20%',
                 type: 'datetime',
                 display: function(data) {
+                    var id = (data["record"]["Teacher"] + "!---!" + data["record"]["Time"] + "---etime").replace(/ /g, "_");
                     var s = data["record"]["Time"].slice(0, -3);
                     var pl = s.split(" ");
                     var d = pl[0].split("-");
                     var t = pl[1].split(":");
                     var dt = new Date(d[0], d[1], d[2], t[0], t[1]);
-                    dt.setMinutes(dt.getMinutes() + interval); 
-                    return dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'});
+                    if(data["record"]["IsTenMin"]) {
+                        dt.setMinutes(dt.getMinutes() + interval*2);
+                    } else {
+                        dt.setMinutes(dt.getMinutes() + interval);
+                    }
+                    return "<span id='" + id + "'>" + dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'})  + "</span>";
+                }
+            },
+            TimeSlotLength: {
+                title: 'Time Slot Length',
+                width: '20%',
+                display: function(data) {
+                    var id = (data["record"]["Teacher"] + "!---!" + data["record"]["Time"] + "---time").replace(/ /g, "_");
+                    if($("#my").prop("checked")) {
+                        var tenMin = "<span id='" + id + "'>10 minutes</span>";
+                        var fiveMin = "<span id='" + id + "'>5 minutes</span>";
+                        return (data["record"]["IsTenMin"]) ? tenMin : fiveMin;
+                    } else {
+                        var tenMinDisabled = (data["record"]["10Min?"]) === "Yes" ? "" : " disabled='disabled'";
+                        return "<select id='" + id + "' style='width:100%;' class='timeSelect'>" + 
+                        "<option value='5' selected='selected'>5 minutes</option><option value='10' " + tenMinDisabled + ">10 minutes</option></select>";
+                    }
                 }
             },
             Other: {
                 title: 'Reserve Time Slot',
-                width: '25%',
+                width: '20%',
                 display: function (data) {
                     var value = data["record"]["Available"];
                     var id = (data["record"]["Teacher"] + "!---!" + data["record"]["Time"]).replace(/ /g, "_");
                     if(value === "No") {
                         try {
                             if(name == data["record"]["Student"]) {
-                                return '<button class="ui-button ui-state-disabled" id="' + id + '"onclick="remove(this)">Remove Time slot</button>';
+                                return '<button class="ui-button" id="' + id + '"onclick="remove(this)">Remove Time slot</button>';
                             } else {
                                 return '<button class="ui-button ui-state-disabled">Remove Time Slot</button>';
                             }
@@ -100,7 +122,7 @@ $(document).ready(function () {
                             return '<button class="ui-button ui-state-disabled">Reserve Time Slot</button>';
                         }
                     } else {
-                        return '<button class="ui-button ui-state-disabled" id="' + id + '"onclick="select(this)">Reserve Time Slot</button>';
+                        return '<button class="ui-button" id="' + id + '"onclick="select(this)">Reserve Time Slot</button>';
                     }
                 }
             }
@@ -182,13 +204,37 @@ function list(postData, jtParams) {
     selected = false;
     prevSearch = se;
     var m =  $("#my").prop("checked") ? ' AND `Student` = "' + name + '"' : "";
-    var av = (m === "") ? "(1)" : "(1, 0)" //$("#avail").prop("checked") ? "(1)" : "(0, 1)";
+    var av = (m === "") ? "(1)" : "(1, 0)"; //$("#avail").prop("checked") ? "(1)" : "(0, 1)";
     var s = (m == "") ? name : "";
     var deferred = new $.Deferred();
     $.post("php/list.php", {search : se, avail : av, my : m, student: s, jtStartIndex : jtParams["jtStartIndex"], jtPageSize : jtParams["jtPageSize"]}, function(data) {
         deferred.resolve(JSON.parse(data));
     });
     deferred.then(function(data) {
+        $(".timeSelect").selectmenu({
+            change: function(e) {
+                if($(e.target).val() === "10") {
+                    var dt = new Date($(document.getElementById(e.target.id.slice(0, -7) + "---stime")).data("time"));
+                    dt.setMinutes(dt.getMinutes() + interval*2);
+                    $(document.getElementById(e.target.id.slice(0, -7) + "---etime")).html(dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'}));
+                } else {
+                    var dt = new Date($(document.getElementById(e.target.id.slice(0, -7) + "---stime")).data("time"));
+                    dt.setMinutes(dt.getMinutes() + interval);
+                    $(document.getElementById(e.target.id.slice(0, -7) + "---etime")).html(dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'}));
+                }
+            }
+        });
+        $(".timeSelect").each(function(i, obj) {
+            if($(obj).val() === "10") {
+                    var dt = new Date($(document.getElementById(obj.id.slice(0, -7) + "---stime")).data("time"));
+                    dt.setMinutes(dt.getMinutes() + interval*2);
+                    $(document.getElementById(obj.id.slice(0, -7) + "---etime")).html(dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'}));
+                } else {
+                    var dt = new Date($(document.getElementById(obj.id.slice(0, -7) + "---stime")).data("time"));
+                    dt.setMinutes(dt.getMinutes() + interval);
+                    $(document.getElementById(obj.id.slice(0, -7) + "---etime")).html(dt.toLocaleTimeString(navigator.language, {hour: '2-digit', minute:'2-digit', timezone:'Asia/Kolkata'}));
+                }
+        });
         if(data["TotalRecordCount"] === 0) {
             //$("tr, .jtable-goto-page").eq(1).first().text("You have already reserved a time slot for this teacher.");
         } else {
@@ -202,13 +248,14 @@ function list(postData, jtParams) {
 }
 
 function select(e) {
-    return;
     $("body").addClass("loading");
+    var isTenMin = $(document.getElementById($(e).attr("id") + "---time")).val() == "10" ? "1" : "";
     $('#container').jtable('reload', function() {
         if(user.getHostedDomain() == domain) {
             if($(e).length) {
                 id = $(e).attr("id").replace(/_/g, " ").split("!---!");
-                $.post("php/select.php", {teacher : id[0], time : id[1], student : user.getBasicProfile().getName()}, function(data) {
+                $.post("php/select.php", {teacher: id[0], time: id[1], student: user.getBasicProfile().getName(), isTenMin: isTenMin}, function(data) {
+                    console.log(data);
                     data = JSON.parse(data);
                     $('#container').jtable('reload');
                     if(data["Message"] < 1) {
@@ -234,11 +281,11 @@ function select(e) {
 }
 
 function remove(e) {
-    return;
     $("body").addClass("loading");
     if(user.getHostedDomain() == domain) {
         var id = $(e).attr("id").split("_").join(" ").split("!---!");
-        $.post("php/remove.php", {teacher : id[0], time : id[1], student : name}, function(data) {
+        var isTenMin = $(document.getElementById($(e).attr("id") + "---time")).text() == "10 minutes" ? "1" : "";
+        $.post("php/remove.php", {teacher : id[0], time : id[1], student : name, isTenMin: isTenMin}, function(data) {
             data = JSON.parse(data);
             $('#container').jtable('reload');
             if(data["Message"] > 0) {

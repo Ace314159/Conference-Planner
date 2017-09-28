@@ -12,15 +12,23 @@
 	    $teacher = $_POST["teacher"];
 	    $time = $_POST["time"];
 	    $student = $_POST["student"];
+	    $isTenMin = $_POST["isTenMin"];
 
-		$stmt = $db->prepare("UPDATE `conferences` SET `Available` = 1,`Student` = NULL WHERE `Teacher` = ? AND `Time` = ?");
-	    $stmt->execute(array($teacher, $time));
+	    if($isTenMin) {
+    		$secondTime = date("Y-m-d H:i:s", (strtotime($time)+300));
+	    	$times = "('$time', '$secondTime')";
+	    } else {
+	    	$times = "('$time')";
+	    }
+
+		$stmt = $db->prepare("UPDATE `conferences` SET `Available` = 1,`Student` = NULL WHERE `Teacher` = ? AND `Time` IN $times");
+	    $stmt->execute(array($teacher));
 
 	    $m =  $stmt->rowCount();
 
 	    if($m > 0) {
-	    	$stmt = $selected->prepare("DELETE FROM `selected` WHERE `Student` = ? AND `Teacher` = ? AND `Time` = ?");
-	    	$stmt->execute(array($student, $teacher, $time));
+	    	$stmt = $selected->prepare("DELETE FROM `selected` WHERE `Student` = ? AND `Teacher` = ? AND `Time` IN $times");
+	    	$stmt->execute(array($student, $teacher));
 	    }
     } catch(PDOException $e) {
     	$m = $e->getMessage();
@@ -34,3 +42,4 @@
 	print json_encode($jTableResult);
 
 	$db = null;
+?>

@@ -15,11 +15,20 @@
 	    	$teacher = $_POST["teacher"];
 	    }
 
-		$stmt = $db->prepare('SELECT `Student`, `Time`, `Available` FROM `conferences` WHERE `Teacher` LIKE ? ORDER BY `Time`, `Student` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
+		$stmt = $db->prepare('SELECT `Student`, `Teacher`, `Time`, `Available` FROM `conferences` WHERE `Teacher` LIKE ? ORDER BY `Time`, `Student` ASC LIMIT '.$_POST['jtStartIndex'].', '.$_POST['jtPageSize']);
 		$stmt->execute(array("%$teacher%"));
+
+		$prevTime = -1;
+		$prevStudent = -1;
 	    foreach($stmt->fetchAll(PDO::FETCH_ASSOC) as $row) {
+	    	if($prevTime + 300 == strtotime($row["Time"]) && $prevStudent == $row["Student"]) {
+	    		$rows[count($rows)-1]["IsTenMin"] = "1";
+	    		continue;
+	    	}
     		$row["Available"] = ($row["Available"] == 1) ? "Yes" : "No";
 	    	$row["Student"] = ($row["Student"] == null) ? "None" : $row["Student"];
+	    	$prevTime = strtotime($row["Time"]);
+	    	$prevStudent = $row["Student"];
 		    $rows[] = $row;
 	    }
     } catch(PDOException $e) {
@@ -39,3 +48,4 @@
 
 	print json_encode($jTableResult);
 	$db = null;
+?>

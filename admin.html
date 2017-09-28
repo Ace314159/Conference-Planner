@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<meta name="google-signin-client_id" content="684750547135-o6l6poe6v675tv6nqkbk79nj3fed636a.apps.googleusercontent.com">
+<head>
+	<title>Conference Planner</title>
+	<noscript>Please enable javascript.</noscript>
+	<script src="https://apis.google.com/js/platform.js"></script>
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
+	<script type="text/javascript" src="admin.js"></script>
+	<link rel="stylesheet" type="text/css" href="main.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.theme.min.css" />
+	<link rel="stylesheet" type="text/css" href="jtable/jtable.min.css" />
+	<meta name="viewport" content="width=1440, initial-scale=1">
+</head>
+
+<body>
+	<div class="g-signin2" data-onsuccess="onSignIn" id="login"></div>
+	<input type="text" class="ui-widget" id="search" placeholder="Teacher Name"/>
+	<a class="g-signout2" id="logout" onclick="signOut()">Log out</a>
+	<div id="container"></div>
+	<div class="modal"></div>
+</body>
+</html>
