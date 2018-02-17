@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Conference Planner</title>
+	<noscript>Please enable javascript.</noscript>
+	<script type="text/javascript" src="jquery.min.js"></script>
+	<script type="text/javascript" src="jquery-ui/jquery-ui.min.js"></script>
+	<script type="text/javascript" src="jtable/jquery.jtable.min.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-app.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-auth.js"></script>
+	<script src="https://www.gstatic.com/firebasejs/4.6.0/firebase-firestore.js"></script>
+
+	<script type="text/javascript" src="serverFunctions.js"></script>
+	<script src="https://apis.google.com/js/platform.js?onload=renderGButton"></script>
+	<script type="text/javascript" src="main.js"></script>
+
+	<link rel="stylesheet" type="text/css" href="main.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.min.css" />
+	<link rel="stylesheet" type="text/css" href="jquery-ui/jquery-ui.theme.min.css" />
+	<link rel="stylesheet" type="text/css" href="jtable/jtable_metro_base.min.css" />
+	<link rel="stylesheet" type="text/css" href="jtable/jtable.min.css" />
+	<meta name="viewport" content="width=1440, initial-scale=1">
+</head>
+
+<body>
+	<div id="login"></div>
+	<a class="g-signout2" id="logout" onclick="signOut()">Log out</a>
+	<input type="text" class="ui-widget" id="search" placeholder="Teacher Name"/>
+    <!--<label for="avail" class="ui-checkboxradio-label" id="availL">Only show available time slots</label>
+	<input type="checkbox" name="avail" id="avail" class="ui-checkboxradio" />!-->
+    <label for="my" class="ui-checkboxradio-label" id="myL">Only show my reserved time slots</label>
+	<input type="checkbox" name="my" id="my" class="ui-checkboxradio" />
+	<div id="container"></div>
+	<div class="modal"></div>
+</body>
+</html>

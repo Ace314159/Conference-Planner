@@ -1,3 +1,5 @@
-xampp/
-ngrok.exe
-php/oauth_service_account.json
+# Firebase
+**/node_modules/*
+**/.firebaserc
+*/npm-debug.log
+*.log
