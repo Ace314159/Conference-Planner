@@ -140,10 +140,12 @@ $(document).ready(function() {
                 display: function(d) {
                     var data = d.record;
                     var id = data[dataStartTime].getTime() + endingSep + endingButton;
+                    var disabled = "ui-button-disabled ui-state-disabled";
+                    if(canSignUp()) disabled = "";
                     if($("#my").prop("checked") || (data.hasOwnProperty(dataTimeLength) && userType === userTypeEnum.Admin)) {
-                        return '<button class="ui-button" id="' + id + '"onclick="remove(this.id)">Remove Time slot</button>';
+                        return '<button class="ui-button ' +  disabled + '" id="' + id + '"onclick="remove(this.id)">Remove Time slot</button>';
                     } else {
-                        return '<button class="ui-button" id="' + id + '"onclick="select(this.id)">Reserve Time Slot</button>';
+                        return '<button class="ui-button ' +  disabled + '" id="' + id + '"onclick="select(this.id)">Reserve Time Slot</button>';
                     }
                 }
             }
@@ -377,6 +379,7 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
 }
 
 function select(id) {
+    if(!canSignUp()) return;
     $("body").addClass("loading");
     selecting = true;
     var startTime = parseInt(id.slice(0, -endingSep.length - endingButton.length));
@@ -428,6 +431,7 @@ function select(id) {
 }
 
 function remove(id) {
+    if(!canSignUp()) return;
     $("body").addClass("loading");
     var startTime = new Date(parseInt(id.slice(0, -endingSep.length - endingButton.length)));
     var length = new Date(parseInt(document.getElementById(id.slice(0, -endingButton.length) + endingLength).getAttribute("data-value")));
@@ -468,7 +472,7 @@ function onSignIn(googleUser) {
     if(checkDomain(googleUser.getBasicProfile().getEmail(), googleUser.getHostedDomain())) {
         $("body").addClass("loading");
         loaded = 0;
-        fullyLoaded = 3;
+        fullyLoaded = 2;
         $(containerID).jtable('load');
         $("#login").css("display", "none");
         $("#logout").css("display", "inline-block");
@@ -512,4 +516,9 @@ function createDialog(title, message, icon) {
 function getTimeString(time) {
     return time.toLocaleString(navigator.language,
         {weekday: 'short', hour: '2-digit', minute: '2-digit', timezone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+}
+
+function canSignUp() {
+    var curTime = new Date();
+    return listMetadata.signupTimes[0] <= curTime && curTime < listMetadata.signupTimes[1];
 }
