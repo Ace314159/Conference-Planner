@@ -15,6 +15,7 @@ const containerID = "#container";
 // Constants for listMetadata
 const listTimesStart = "timesStart";
 const listTimesEnd = "timesEnd";
+const listBreaksGroups = "breaksGroups";
 const listBreaksStart = "breaksStart";
 const listBreaksEnd = "breaksEnd";
 const listIntervals = "intervals";
@@ -322,10 +323,12 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                         }
                     } 
                     if(!invalidInterval) {
+                        // Use the correct break group
+                        var breaksGroup = listMetadata[listBreaksGroups][curSearchableID];
                         // Check if the selected interval intersects with any of the breaks
-                        for(let k = 0; k < listMetadata[listBreaksStart].length; k++) {
-                            var startTime = listMetadata[listBreaksStart][k].getTime();
-                            var endTime = listMetadata[listBreaksEnd][k].getTime();
+                        for(let k = 0; k < listMetadata[listBreaksStart][breaksGroup].length; k++) {
+                            var startTime = listMetadata[listBreaksStart][breaksGroup][k].getTime();
+                            var endTime = listMetadata[listBreaksEnd][breaksGroup][k].getTime();
                             // <= and >= give a buffer of the smallest interval - makes the last time slot end at breakStart and next one start at 
                             // breakEnd + the smallest interval
                             if(startTime <= time && endTime >= time || startTime > time && startTime < time + interval.getTime()) {
