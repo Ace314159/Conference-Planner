@@ -61,6 +61,13 @@ $(document).ready(function() {
             $(".jtable th:first-child .jtable-column-header-text").html(searchableType);
             if(userType === userTypeEnum.Admin) {
                 $(".jtable th:first-child .jtable-column-header-text").html(userTypeEnum.Student);
+            } else if(userType === userTypeEnum.Teacher) {
+                // Replace all instances of teacher with student
+                try {
+                    $(".jtable-no-data-row td").html($(".jtable-no-data-row td").html().replace(/teacher/g, "student"));
+                } catch(err) {
+
+                }
             }
         },
         messages : {
@@ -345,12 +352,10 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                         for(let k = 0; k < myTimeSlots.length; k++) {
                             var myStartTime = myTimeSlots[k].time.start.getTime();
                             var myEndTime = myTimeSlots[k].time.start.getTime() + myTimeSlots[k].time["length"].getTime();
-                            // <= and >= give a buffer of the smallest interval for students
-                            if(userType === userTypeEnum.Student) {
-                                if(myStartTime <= time && myEndTime >= time || myStartTime >= time && myStartTime <= time + interval.getTime()) {
-                                    invalidInterval = true;
-                                    break;
-                                }
+                            // <= and >= give a buffer of the smallest interval for students and teachers
+                            if(myStartTime <= time && myEndTime >= time || myStartTime >= time && myStartTime <= time + interval.getTime()) {
+                                invalidInterval = true;
+                                break;
                             }
                         }
                     }
@@ -464,7 +469,7 @@ function remove(id) {
     }).then(function() {
         $("#search").val("");
         prevSearchableName = "";
-        $(containerID).jtable('load', {clear: true});
+        $(containerID).jtable('load');
         createDialog("Success!", "The time slot from " + getTimeString(startTime) + " to " + getTimeString(endTime) + 
                      " has been deleted for " + searchableName + ".", "ui-icon-check");
         //$("body").removeClass("loading");

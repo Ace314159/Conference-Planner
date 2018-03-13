@@ -206,6 +206,8 @@ function checkDomain(emailAddress, domain) {
 				searchableType = userTypeEnum.Teacher;
 			} else if(userType === userTypeEnum.Teacher) {
 				searchableType = userTypeEnum.Student;
+				// Replace all instances of Teacher with Student
+				$("#search").attr("placeholder", $("#search").attr("placeholder").replace(/Teacher/g, "Student"));
 			}
 			$(containerID).jtable('option', 'title', "Student");
 			$("body").removeClass("loading");
