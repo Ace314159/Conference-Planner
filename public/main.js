@@ -324,7 +324,11 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                     } 
                     if(!invalidInterval) {
                         // Use the correct break group
-                        var breaksGroup = listMetadata[listBreaksGroups][curSearchableID];
+                        if(userType === userTypeEnum.Teacher) {
+                            var breaksGroup = listMetadata[listBreaksGroups][user.getId()];
+                        } else {
+                            var breaksGroup = listMetadata[listBreaksGroups][curSearchableID];
+                        }
                         // Check if the selected interval intersects with any of the breaks
                         for(let k = 0; k < listMetadata[listBreaksStart][breaksGroup].length; k++) {
                             var startTime = listMetadata[listBreaksStart][breaksGroup][k].getTime();
