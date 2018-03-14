@@ -300,35 +300,31 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                 // Loop through all the intervals and see which one works for the selected starting time
                 for(let j = 0; j < listMetadata[listIntervals].length; j++) {
                     var interval = listMetadata[listIntervals][j];
+                    var timeIsOver = false;
                     if(!invalidInterval) {
                         // Check if the selectd interval intersects with the searchable's already reserved time slots
                         for(let k = 0; k < searchablesTimeSlots.length; k++) {
                             var startTime = searchablesTimeSlots[k].time.start.getTime();
                             var endTime = searchablesTimeSlots[k].time.start.getTime() + searchablesTimeSlots[k].time["length"].getTime();
-                            // <= and >= give a buffer of the smallest interval for students
-                            if(userType === userTypeEnum.Teacher) { // Searchable is student
-                                if(startTime <= time && endTime >= time || startTime >= time && startTime <= time + interval.getTime()) {
-                                    invalidInterval = true;
-                                    break;
-                                }
-                            } else {
-                                if(startTime === time) {
-                                    if(userType === userTypeEnum.Admin && interval.getTime() === smallestInterval) {
-                                        listRecords.push({
-                                            [dataSearchable]: searchablesTimeSlots[k].student.name,
-                                            [dataStartTime]:  searchablesTimeSlots[k].time.start,
-                                            [dataEndTime]: new Date(searchablesTimeSlots[k].time.start.getTime() + 
-                                                searchablesTimeSlots[k].time["length"].getTime()),
-                                            [dataTimeLength]: searchablesTimeSlots[k].time["length"]
-                                        });
-                                        time += searchablesTimeSlots[k].time["length"].getTime() - smallestInterval;
-                                    }
-                                    invalidInterval = true;
-                                    break;
-                                }
+                            if(startTime === time && userType === userTypeEnum.Admin && interval.getTime() === smallestInterval) {
+                                listRecords.push({
+                                    [dataSearchable]: searchablesTimeSlots[k].student.name,
+                                    [dataStartTime]:  searchablesTimeSlots[k].time.start,
+                                    [dataEndTime]: new Date(searchablesTimeSlots[k].time.start.getTime() + 
+                                        searchablesTimeSlots[k].time["length"].getTime()),
+                                    [dataTimeLength]: searchablesTimeSlots[k].time["length"]
+                                });
+                                time += searchablesTimeSlots[k].time["length"].getTime() - smallestInterval;
+                                var timeIsOver = true;
+                                break;
+                            // <= and >= give a buffer of the smallest interval for students and teachers
+                            } else if(startTime <= time && endTime >= time || startTime >= time && startTime <= time + interval.getTime()) {
+                                invalidInterval = true;
+                                break;
                             }
                         }
-                    } 
+                    }
+                    if(timeIsOver) break;
                     if(!invalidInterval) {
                         // Use the correct break group
                         if(userType === userTypeEnum.Teacher) {
