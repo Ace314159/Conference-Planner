@@ -98,7 +98,8 @@ function onSignInServer(googleUser) {
 		// Add User to Firebase DB
 		userDB.set({
 			name: googleUser.getBasicProfile().getName(),
-			ref: userDB
+			email: googleUser.getBasicProfile().getEmail(),
+			ref: userDB,
 		});
 
 		// Get Searchables
