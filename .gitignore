@@ -3,4 +3,5 @@
 **/.firebaserc
 */npm-debug.log
 *.log
-teacher_breaks_account.json
+firebase_admin_service_account.json
+breaks.json
