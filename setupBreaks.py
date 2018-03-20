@@ -5,7 +5,6 @@ from datetime import datetime
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
-from firebase_admin import auth
 
 schoolsID = "Schools"
 teachersID = "Teachers"
@@ -14,8 +13,7 @@ breaksEndID = "breaksEnd"
 breaksGroupsID = "breaksGroups"
 
 if len(sys.argv) != 2:
-	sys.argv.append("ISH")
-	# raise ValueError("Need to specify school as first argument")
+	raise ValueError("Need to specify school as first argument")
 school = sys.argv[1]
 
 # Use the service account
@@ -30,7 +28,6 @@ teachersRef = schoolRef.collection(teachersID)
 teacherIDs = {teacher.to_dict()["email"]: teacher.id for teacher in teachersRef.get()}
 
 schoolRefData = schoolRef.get().to_dict()
-schoolRefData = {}
 schoolRefData[breaksStartID] = {}
 schoolRefData[breaksEndID] = {}
 schoolRefData[breaksGroupsID] = {}
