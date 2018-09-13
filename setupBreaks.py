@@ -13,7 +13,8 @@ breaksEndID = "breaksEnd"
 breaksGroupsID = "breaksGroups"
 
 if len(sys.argv) != 2:
-	raise ValueError("Need to specify school as first argument")
+	sys.argv.append("ISH")
+	# raise ValueError("Need to specify school as first argument")
 school = sys.argv[1]
 
 # Use the service account
@@ -36,8 +37,8 @@ with open("breaks.json", "r") as f:
 	breaksData = json.load(f)
 
 for i, group in enumerate(breaksData):
-	schoolRefData[breaksStartID][str(i)] = [datetime.strptime(start, "%m/%d/%y %H:%M") for start in group["breakStarts"]]
-	schoolRefData[breaksEndID][str(i)] = [datetime.strptime(end, "%m/%d/%y %H:%M") for end in group["breakEnds"]]
+	schoolRefData[breaksStartID][str(i)] = [datetime.strptime(start + " +0530", "%m/%d/%y %H:%M %z") for start in group["breakStarts"]]
+	schoolRefData[breaksEndID][str(i)] = [datetime.strptime(end + " +0530", "%m/%d/%y %H:%M %z") for end in group["breakEnds"]]
 	for teacherID in group["teachers"]:
 		if teacherID in teacherIDs:
 			schoolRefData[breaksGroupsID][str(teacherIDs[teacherID])] = i
