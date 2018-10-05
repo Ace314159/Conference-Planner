@@ -1,9 +1,9 @@
 const functions = require('firebase-functions');
 
 
-exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeSlots/{timeSlotID}").onCreate(e => {
-	const newTimeSlot = e.data.data();
-	const timeSlotsDB = e.data.ref.parent;
+exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeSlots/{timeSlotID}").onCreate(doc => {
+	const newTimeSlot = doc.data();
+	const timeSlotsDB = doc.ref.parent;
 	if(newTimeSlot.verified) return;
 	let promises = [
 		// Check if a time slot with this student teacher pair already exists
@@ -12,7 +12,7 @@ exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeS
 			if(querySnapshot.empty) {
 				return Promise.resolve(0);
 			} else {
-				return Promise.reject(new Error(querySnapshot.docs[0].get("timestamp").getTime()));
+				return Promise.reject(new Error(querySnapshot.docs[0].get("timestamp").toMillis()));
 			}
 		}),
 		// Check if a student's time slot clashes with the new time slot
@@ -20,11 +20,11 @@ exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeS
 		where("verified", "==", true).orderBy("time.start").get().then(querySnapshot => {
 			let errorCode;
 			querySnapshot.forEach(doc => {
-				let startTime = doc.data().time.start.getTime();
-				let endTime = startTime + doc.data().time.length.getTime();
+				let startTime = doc.data().time.start.toMillis();
+				let endTime = startTime + doc.data().time.length.toMillis();
 				if(startTime <= newTimeSlot.time.start && endTime >= newTimeSlot.time.start || 
 				   startTime >= newTimeSlot.time.start && startTime <= newTimeSlot.time.start + newTimeSlot.time.length) {
-					errorCode = doc.get("timestamp").getTime();
+					errorCode = doc.get("timestamp").toMillis();
 				}
 			});
 			if(errorCode === undefined) return Promise.resolve(0);
@@ -35,11 +35,11 @@ exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeS
 		where("verified", "==", true).orderBy("time.start").get().then(querySnapshot => {
 			let errorCode;
 			querySnapshot.forEach(doc => {
-				let startTime = doc.data().time.start.getTime();
-				let endTime = startTime + doc.data().time.length.getTime();
+				let startTime = doc.data().time.start.toMillis();
+				let endTime = startTime + doc.data().time.length.toMillis();
 				if(startTime <= newTimeSlot.time.start && endTime >= newTimeSlot.time.start || 
 				   startTime >= newTimeSlot.time.start && startTime <= newTimeSlot.time.start + newTimeSlot.time.length) {
-					errorCode = doc.get("timestamp").getTime();
+					errorCode = doc.get("timestamp").toMillis();
 				}
 			});
 			if(errorCode === undefined) return Promise.resolve(0);
@@ -47,12 +47,12 @@ exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeS
 		}),
 	];
 	return Promise.all(promises).then(data => {
-		return e.data.ref.update({"verified": true});
+		return doc.ref.update({"verified": true});
 	}).catch(error => {
-		if(newTimeSlot.timestamp.getTime() < parseInt(error.message)) {
-			return e.data.ref.update({"verified": true});
+		if(newTimeSlot.timestamp.toMillis() < parseInt(error.message)) {
+			return doc.ref.update({"verified": true});
 		} else {
-			return e.data.ref.delete();
+			return doc.ref.delete();
 		}
 	});
 });
