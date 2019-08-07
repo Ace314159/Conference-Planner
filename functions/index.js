@@ -50,8 +50,10 @@ exports.verifyTimeSlot = functions.firestore.document("/Schools/{schoolID}/TimeS
 		return doc.ref.update({"verified": true});
 	}).catch(error => {
 		if(newTimeSlot.timestamp.toMillis() < parseInt(error.message)) {
+			console.log("Time slots collided but this one occurred before, so it's fine. Timestamp:", newTimeSlot.timestamp);
 			return doc.ref.update({"verified": true});
 		} else {
+			console.log("Deleted. Timestamp:", newTimeSlot.timestamp);
 			return doc.ref.delete();
 		}
 	});

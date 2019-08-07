@@ -123,7 +123,8 @@ $(document).ready(function() {
                     var data = d.record;
                     var id = data[dataStartTime].getTime() + endingSep + endingLength;
                     if($("#my").prop("checked") || data.hasOwnProperty(dataTimeLength)) {
-                        return "<span id='" + id + "' data-value='" + data[dataTimeLength].getTime() +"'>" + data[dataTimeLength].getTime() / 60000 + " minutes</span>";
+                        return "<span id='" + id + "' data-value='" + data[dataTimeLength].getTime() +"'>" + data[dataTimeLength].getTime() / 60000 +
+                        " minutes</span>";
                     } else {
                         var out = "<select id='" + id + "' style='width:100%;' class='timeSelect'>"
                         var selected = "selected='selected'>";
@@ -270,7 +271,7 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                     createDialog("Already Reserved!", "You have already reserved a time slot with this " + searchableType.toLowerCase() + ".", "ui-icon-alert");
                 }
                 $("#search").val("");
-                return {"Result": "OK", "Records": [], "TotalRecordCount": 0};   
+                return {"Result": "OK", "Records": [], "TotalRecordCount": 0};
             }
         }
     }
@@ -331,6 +332,13 @@ function list(postData, jtParams) { // Time slot intervals must be multiple of o
                             var breaksGroup = listMetadata[listBreaksGroups][user.getId()];
                         } else {
                             var breaksGroup = listMetadata[listBreaksGroups][curSearchableID];
+                        }
+                        if(breaksGroup === undefined) {
+                            $("body").removeClass("loading");
+                            createDialog("Invalid Teacher", "Please contact Mr. Patrick and akashware@ishyd.org if you think this message is not correct.",
+                                "ui-icon-alert");
+                            $("#search").val("");
+                            return {"Result": "OK", "Records": [], "TotalRecordCount": 0};
                         }
                         // Check if the selected interval intersects with any of the breaks
                         for(let k = 0; k < listMetadata[listBreaksStart][breaksGroup].length; k++) {
@@ -523,7 +531,7 @@ function createDialog(title, message, icon) {
 
 function getTimeString(time) {
     return time.toLocaleString(navigator.language,
-        {weekday: 'short', hour: '2-digit', minute: '2-digit', timezone: Intl.DateTimeFormat().resolvedOptions().timeZone});
+        {weekday: 'short', hour: '2-digit', minute: '2-digit', timeZone: "Asia/Kolkata"});
 }
 
 function canSignUp() {

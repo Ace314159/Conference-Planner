@@ -46,6 +46,6 @@ db = firestore.client()
 schoolRef = db.collection(schoolsID).document(school)
 timeSlotsRef = schoolRef.collection(timeSlotsID)
 
-timeSlots = timeSlotsRef.where("student.name", "==", "Michael Achillea").get()
+timeSlots = timeSlotsRef.where("teacher.name", "==", "David Schalm").get()
 for timeSlot in timeSlots:
 	print(TimeSlot.from_dict(timeSlot.to_dict()))
